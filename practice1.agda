@@ -170,16 +170,25 @@ fac3=6 = unit
 fac2≠3 : T (fac (suc (suc zero)) ==' suc (suc (suc zero))) → Empty
 fac2≠3 = absurd
 
--- 7. Определите равенство для списков натуральных чисел; докажите, что для любого xs : List ℕ верно, что reverse (reverse xs) равно xs
+-- 8. Определите равенство для списков натуральных чисел; докажите, что для любого xs : List ℕ верно, что reverse (reverse xs) равно xs
 
-list_eq : List ℕ → List ℕ → Bool
-list_eq nil nil = true
-list_eq nil _ = false
-list_eq _ nil = false
-list_eq (cons x xs) (cons y ys) = if x ==' y then list_eq xs ys else false
+eq : List ℕ → List ℕ → Bool
+eq nil nil = true
+eq nil _ = false
+eq _ nil = false
+eq (cons x xs) (cons y ys) = if x ==' y then eq xs ys else false
 
-revrev : (xs : List ℕ) → T (list_eq (reverse (reverse xs)) xs)
+testReverse : T (eq (reverse (cons zero (cons (suc(zero)) nil) )) (cons (suc zero) (cons zero nil)))
+testReverse = unit
+
+addition : (xs : List ℕ) → (x : ℕ) → T (eq(reverse (cons x xs)) (xs ++ cons x nil))
+addition nil zero = unit
+addition nil (suc x) = addition nil x
+addition (cons x xs) zero = {!!}
+addition xs (suc x) = {!!} 
+
+revrev : (xs : List ℕ) → T (eq (reverse (reverse xs)) xs)
 revrev nil = unit
-revrev (cons x xs) = revrev xs
-
--- Тесты
+revrev (cons zero nil) = unit
+revrev (cons zero xs) = ?
+revrev (cons (suc x) xs) = ?
