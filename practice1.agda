@@ -123,10 +123,10 @@ sort' (suc c) (cons x xs)  = ((sort' c lesser) ++ (cons x nil)) ++ (sort' c grea
   lesser = filter xs (\p → p < x)
   greater = filter xs (\p → x < p)
 
-
 sort : List ℕ → List ℕ
 sort nil = nil
 sort xs = sort' (length xs) xs 
+
 
 -- 6. Докажите ассоциативность ||
 
@@ -150,7 +150,10 @@ false == true = false
 false == false = true
 
 ||-assoc : (x y z : Bool) → T ((x || y) || z == x || (y || z))
-||-assoc = {!!}
+||-assoc true y z = unit
+||-assoc false true z = unit
+||-assoc false false true = unit
+||-assoc false false false = unit
 
 -- 7. Докажите, что fac 3 равен 6 и что fac 2 не равен 3.
 
@@ -162,10 +165,10 @@ suc _ ==' zero = false
 suc x ==' suc y = x ==' y
 
 fac3=6 : T (fac (suc (suc (suc zero))) ==' suc (suc (suc (suc (suc (suc zero))))))
-fac3=6 = {!!}
+fac3=6 = unit
 
 fac2≠3 : T (fac (suc (suc zero)) ==' suc (suc (suc zero))) → Empty
-fac2≠3 = {!!}
+fac2≠3 = absurd
 
 -- 7. Определите равенство для списков натуральных чисел; докажите, что для любого xs : List ℕ верно, что reverse (reverse xs) равно xs
 
@@ -176,4 +179,7 @@ list_eq _ nil = false
 list_eq (cons x xs) (cons y ys) = if x ==' y then list_eq xs ys else false
 
 revrev : (xs : List ℕ) → T (list_eq (reverse (reverse xs)) xs)
-revrev = {!!}
+revrev nil = unit
+revrev (cons x xs) = revrev xs
+
+-- Тесты
