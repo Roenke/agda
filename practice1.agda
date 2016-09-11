@@ -1,4 +1,4 @@
-module helloworld where
+module practice1 where
 
 -- 0. flip, const
 const : {A B : Set} -> A -> B -> A
@@ -41,9 +41,9 @@ _*_ : ℕ → ℕ → ℕ
 zero * y = zero
 suc x * y = y + x * y
 
-factorial : ℕ → ℕ
-factorial zero = suc zero
-factorial (suc x) = (suc x) * (factorial x)
+fac : ℕ → ℕ
+fac zero = suc zero
+fac (suc x) = (suc x) * (fac x)
 
 pow : ℕ → ℕ → ℕ
 pow value zero = suc zero
@@ -62,9 +62,6 @@ zero < suc y = true
 suc x < zero = false
 suc x < suc y = x < y
 
--- div : ℕ → ℕ → ℕ
--- div x y = if (x < y) then zero else suc (div (x - y) y)
-
 div' : ℕ → ℕ → ℕ → ℕ
 div' zero x y = zero
 div' (suc c) x y = if (x < y) then zero else suc (div' c (x - y) y)
@@ -79,10 +76,17 @@ mod' (suc x) a b = mod' x (a - b) b
 mod : ℕ → ℕ → ℕ 
 mod a b = mod' (div a b) a b
 
+max : ℕ → ℕ → ℕ
+max a b = if a < b then b else a
+
+gcd' : ℕ → ℕ → ℕ → ℕ
+gcd' zero a b = a
+gcd' _ zero b = b
+gcd' _ a zero = a
+gcd' (suc x) a b = if b < a then gcd' x (mod a b) b else gcd' x a (mod b a)
+
 gcd : ℕ → ℕ → ℕ
-gcd zero b = b
-gcd a zero = a
-gcd a b = if b < a then gcd (mod a b) b else gcd a (mod b a)
+gcd a b = gcd' (max a b) a b
 
 -- 4. Определить (полиморфный) reverse для списков
 
@@ -94,17 +98,35 @@ _++_ : {A : Set} → List A → List A → List A
 nil ++ ys = ys
 cons x xs ++ ys = cons x (xs ++ ys)
 
-reverse' : {A : Set} → List A → List A → List A
-reverse' acc nil = acc
-reverse' acc (cons x xs) = reverse' (cons x acc) xs
-
 reverse : {A : Set} → List A → List A
-reverse list = reverse' nil list
+reverse list = reverse' nil list where
+  reverse' : {A : Set} → List A → List A → List A
+  reverse' acc nil = acc
+  reverse' acc (cons x xs) = reverse' (cons x acc) xs
 
 -- 5. Реализовать любой алгоритм сортировки
 
+length : List ℕ → ℕ
+length nil = zero
+length (cons x xs) = suc (length xs)
+
+filter : List ℕ → (ℕ → Bool) → List ℕ
+filter nil _ = nil
+filter (cons x xs) predicate  = if predicate(x)
+                           then (cons x (filter xs predicate))
+                           else filter xs predicate
+
+sort' : ℕ → List ℕ → List ℕ
+sort' zero xs = xs
+sort' _ nil = nil
+sort' (suc c) (cons x xs)  = ((sort' c lesser) ++ (cons x nil)) ++ (sort' c greater) where
+  lesser = filter xs (\p → p < x)
+  greater = filter xs (\p → x < p)
+
 sort : List ℕ → List ℕ
-sort = {!!}
+sort nil = nil
+sort xs = sort' (length xs) xs 
+
 
 -- 6. Докажите ассоциативность ||
 
@@ -128,6 +150,45 @@ false == true = false
 false == false = true
 
 ||-assoc : (x y z : Bool) → T ((x || y) || z == x || (y || z))
-||-assoc = {!!}
+||-assoc true y z = unit
+||-assoc false true z = unit
+||-assoc false false true = unit
+||-assoc false false false = unit
 
--- 7. Определите равенство для списков натуральных чисел; докажите, что для любого xs : List ℕ верно, что reverse (reverse xs) равно xs
+-- 7. Докажите, что fac 3 равен 6 и что fac 2 не равен 3.
+
+infix 3 _=='_
+_=='_ : ℕ → ℕ → Bool
+zero ==' zero = true
+zero ==' suc _ = false
+suc _ ==' zero = false
+suc x ==' suc y = x ==' y
+
+fac3=6 : T (fac (suc (suc (suc zero))) ==' suc (suc (suc (suc (suc (suc zero))))))
+fac3=6 = unit
+
+fac2≠3 : T (fac (suc (suc zero)) ==' suc (suc (suc zero))) → Empty
+fac2≠3 = absurd
+
+-- 8. Определите равенство для списков натуральных чисел; докажите, что для любого xs : List ℕ верно, что reverse (reverse xs) равно xs
+
+eq : List ℕ → List ℕ → Bool
+eq nil nil = true
+eq nil _ = false
+eq _ nil = false
+eq (cons x xs) (cons y ys) = if x ==' y then eq xs ys else false
+
+testReverse : T (eq (reverse (cons zero (cons (suc(zero)) nil) )) (cons (suc zero) (cons zero nil)))
+testReverse = unit
+
+addition : (xs : List ℕ) → (x : ℕ) → T (eq(reverse (cons x xs)) (xs ++ cons x nil))
+addition nil zero = unit
+addition nil (suc x) = addition nil x
+addition (cons x xs) zero = {!!}
+addition xs (suc x) = {!!} 
+
+revrev : (xs : List ℕ) → T (eq (reverse (reverse xs)) xs)
+revrev nil = unit
+revrev (cons zero nil) = unit
+revrev (cons zero xs) = ?
+revrev (cons (suc x) xs) = ?
