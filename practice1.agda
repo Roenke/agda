@@ -98,11 +98,12 @@ _++_ : {A : Set} → List A → List A → List A
 nil ++ ys = ys
 cons x xs ++ ys = cons x (xs ++ ys)
 
+reverse-acc : {A : Set} → List A → List A → List A
+reverse-acc acc nil = acc
+reverse-acc acc (cons x xs) = reverse-acc (cons x acc) xs
+
 reverse : {A : Set} → List A → List A
-reverse list = reverse' nil list where
-  reverse' : {A : Set} → List A → List A → List A
-  reverse' acc nil = acc
-  reverse' acc (cons x xs) = reverse' (cons x acc) xs
+reverse list = reverse-acc nil list
 
 -- 5. Реализовать любой алгоритм сортировки
 
@@ -181,14 +182,17 @@ eq (cons x xs) (cons y ys) = if x ==' y then eq xs ys else false
 testReverse : T (eq (reverse (cons zero (cons (suc(zero)) nil) )) (cons (suc zero) (cons zero nil)))
 testReverse = unit
 
-addition : (xs : List ℕ) → (x : ℕ) → T (eq(reverse (cons x xs)) (xs ++ cons x nil))
-addition nil zero = unit
-addition nil (suc x) = addition nil x
-addition (cons x xs) zero = {!!}
-addition xs (suc x) = {!!} 
+list-eq-refl : (xs : List ℕ) → T (eq xs xs)
+list-eq-refl nil = unit
+list-eq-refl (cons zero xs) = list-eq-refl xs
+list-eq-refl (cons (suc c) xs) = list-eq-refl (cons c xs)
+
+rev-acc-prop : (acc : List ℕ) → (list : List ℕ) → T (eq (reverse (reverse-acc acc list)) (reverse-acc list acc)) 
+rev-acc-prop acc nil = list-eq-refl (reverse-acc nil acc)
+rev-acc-prop ys (cons x xs) = rev-acc-prop (cons x ys) xs
+
+-- reverse-acc ys xs == reverse xs ++ ys
+-- reverse (reverse-acc ys xs) = reverse ys ++ xs = reverse-acc xs ys
 
 revrev : (xs : List ℕ) → T (eq (reverse (reverse xs)) xs)
-revrev nil = unit
-revrev (cons zero nil) = unit
-revrev (cons zero xs) = ?
-revrev (cons (suc x) xs) = ?
+revrev xs = rev-acc-prop nil xs
