@@ -191,8 +191,5 @@ rev-acc-prop : (acc : List ℕ) → (list : List ℕ) → T (eq (reverse (revers
 rev-acc-prop acc nil = list-eq-refl (reverse-acc nil acc)
 rev-acc-prop ys (cons x xs) = rev-acc-prop (cons x ys) xs
 
--- reverse-acc ys xs == reverse xs ++ ys
--- reverse (reverse-acc ys xs) = reverse ys ++ xs = reverse-acc xs ys
-
 revrev : (xs : List ℕ) → T (eq (reverse (reverse xs)) xs)
 revrev xs = rev-acc-prop nil xs
