@@ -8,14 +8,17 @@ open import Data.Unit
 -- 2. Определите запись Point, который может хранить элементы произвольных типов A и B произвольных уровней.
 --    Определите равенство для такого типа Point.
 
-record Point {A : Set} {B : Set} : Set where
+record Point {level} (A B : Set level) : Set level where
   constructor point
   field
     x : A
     y : B
 
-_==''_ : Point → Point → Bool
-x =='' y = {!!}
+point-eq : ∀ {level} {A B : Set level}
+  (eq-A : A → A → Bool) →
+  (eq-B : B → B → Bool) →
+  Point A B → Point A B → Bool
+point-eq eq-A eq-B (point x1 y1) (point x2 y2) = (eq-A x1 x2) ∧ (eq-B y1 y2)
 
 -- 3. Напишите функцию lookup, которая принимает список и натуральное число и возвращает элемент по заданому индексу.
 --    В общем случае эту функцию определить невозможно, т.к. индекс может быть больше, чем число элементов в списке.
@@ -75,5 +78,5 @@ module Sort {A : Set} (_<_ : A → A → Bool) where
 
 open Sort _<'_ 
 
-sort-test : T ( list-eq (sort (3 ∷ 1 ∷ 2 ∷ [])) (1 ∷ 2 ∷ 3 ∷ []) )
+sort-test : T ( list-eq (sort (3 ∷ 1 ∷ 2 ∷ 5 ∷ 0 ∷ 4 ∷ [])) (0 ∷ 1 ∷ 2 ∷ 3 ∷ 4 ∷ 5 ∷ []) )
 sort-test = tt
