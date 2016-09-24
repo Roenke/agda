@@ -3,6 +3,7 @@ module homework3 where
 open import Data.Nat
 open import Data.Unit
 open import Data.Product
+open import Data.Bool
 
 vec : Set → ℕ → Set
 vec A 0 = ⊤
@@ -19,14 +20,14 @@ map-Vec _ nil = nil
 map-Vec fun (cons x xs) = cons (fun x) (map-Vec fun xs)
 
 map-vec : {A B : Set} {n : ℕ} → (A → B) → vec A n → vec B n
-map-vec {a} {b} {0} _ _ = tt
-map-vec {a} {b} {suc n} fun (x , xs) = (fun x , map-vec fun xs)
+map-vec {n = 0} _ _ = tt
+map-vec {n = suc _} fun (x , xs) = (fun x , map-vec fun xs)
 
 -- 2. Реализуйте аналоги функции zip для vec и Vec.
 
 zip-vec : {A B : Set} {n : ℕ} → vec A n → vec B n → vec (A × B) n
-zip-vec {_} {_} {0} _ _ = tt
-zip-vec {_} {_} {suc n} (x , xs) (y , ys) = ((x , y) , (zip-vec xs ys))
+zip-vec {n = 0} _ _ = tt
+zip-vec {n = suc n} (x , xs) (y , ys) = ((x , y) , (zip-vec xs ys))
 
 zip-Vec : {A B : Set} {n : ℕ} → Vec A n → Vec B n → Vec (A × B) n
 zip-Vec nil nil = nil
@@ -41,8 +42,8 @@ data Fin : ℕ → Set where
   suc : {n : ℕ} → Fin n → Fin (suc n)
 
 coin : {A : Set} {n : ℕ} → (Fin n → A) → Vec A n
-coin {_} {0} f = nil
-coin {_} {suc n} f = {!!} --cons (f (zero)) (coin f)
+coin {n = zero} _ = nil
+coin {n = suc n} fun = cons (fun zero) (coin (λ x → fun (suc x)))
 
 -- 4. Определите тип матриц и ряд функций над ними.
 
@@ -53,49 +54,70 @@ m : Mat ℕ 2 2
 m = cons (cons 0 (cons 1 nil)) (cons (cons 2 (cons 3 nil)) nil) 
 mt = cons (cons 0 (cons 2 nil)) (cons (cons 1 (cons 3 nil)) nil) 
 
+fst : {A B : Set} → A × B → A
+fst (x , _) = x
+
+snd : {A B : Set} → A × B → B
+snd (_ , y) = y
+
+zipWith : {A B C : Set} {n : ℕ} → (A → B → C) → Vec A n → Vec B n → Vec C n
+zipWith _ nil nil = nil
+zipWith fun vec₁ vec₂ = map-Vec (λ x → fun (fst x) (snd x)) (zip-Vec vec₁ vec₂) 
 -- диагональная матрица
 
-repeat : {A : Set} → A → (n : ℕ) → Vec A n
-repeat _ 0 = nil
-repeat val (suc n) = cons val (repeat val n) 
-
-ins-begin : {A : Set} {n m : ℕ} → A → Mat A n m → Mat A n (suc m)
-ins-begin _ nil = nil
-ins-begin v (cons l ls) = cons (cons v l) (ins-begin v ls)
-
-diag-acc : {A : Set} {n m r : ℕ} → ℕ → Mat A r r → A → Mat A r r
-diag-acc 0 acc _ = acc
-diag-acc (suc n) acc (cons l ls)
-
-diag : {A : Set} → A → A →{n : ℕ} → Mat A n n
-diag val z {0} = nil
-diag val z {suc n} = ? -- cons (cons val (repeat z n)) (ins-begin z 
+diag : {A : Set} → A → A → {n : ℕ} → Mat A n n
+diag z e = {!!}
 
 -- транспонирование матриц
 
 transpose : {A : Set} {n m : ℕ} → Mat A n m → Mat A m n
-transpose M = {!!} 
+transpose nil = coin (λ _ → nil)
+transpose (cons line M) = zipWith cons line (transpose M)
 
 -- сложение матриц
 
 add : {A : Set} (_+_ : A → A → A) → {n m : ℕ} → Mat A n m → Mat A n m → Mat A n m
-add _+_ M N = {!!}
+add _+_ nil nil = nil
+add _+_ (cons line₁ N) (cons line₂ M) = cons (zipWith _+_ line₁ line₂) (add _+_ N M)
 
 -- умножение матриц
 
 mul : {A : Set} (_+_ _*_ : A → A → A) → {n m k : ℕ} → Mat A n m → Mat A m k → Mat A n k
-mul _+_ _*_ M N = {!!}
+mul _+_ _*_ M N = {!!} 
 
 -- 5. Определите при помощи индуктивных семейств тип CTree A n бинарных деревьев высоты ровно n с элементами во внутренних узлах.
 --    Любое такое бинарное дерево будет полным.
 
 data CTree (A : Set) : ℕ → Set where
-
+  leaf : CTree A 0
+  node : {n : ℕ} → A × (CTree A n) × (CTree A n) → (CTree A (suc n))
+  
 -- 6. Определите при помощи индуктивных семейств тип Tree A n бинарных деревьев высоты не больше n с элементами во внутренних узлах.
 
-data Tree (A : Set) : ℕ → Set where
+max : ℕ → ℕ → ℕ
+max zero x = x
+max x zero = x
+max (suc n) (suc m) = suc (max n m)
 
+min : ℕ → ℕ → ℕ
+min zero x = zero
+min x zero = zero
+min (suc n) (suc m) = suc (min n m)
+
+data Tree (A : Set) : ℕ → Set where
+  leaf : Tree A 0
+  node : {n m : ℕ} → A × (Tree A n) × (Tree A m) → (Tree A (suc (max n m)))
 -- определите функцию, возвращающую высоту дерева.
 
+_<'_ : ℕ → ℕ → Bool
+zero <' zero = false
+zero <' _ = true
+_ <' zero = false
+(suc n) <' (suc m) = n <' m
+
+maxTree : {A : Set} {n m : ℕ} → Tree A n → Tree A m → Tree A (max n m)
+maxTree {n = n} {m = m} t1 t2 = ? --if n <' m then t2 else t1 
+
 height : {A : Set} (n : ℕ) → Tree A n → Fin (suc n)
-height n t = {!!}
+height zero _ = zero
+height (suc n) t = ? --suc (height n (maxTree t1 t2))
