@@ -74,9 +74,11 @@ distr zero _ _ = refl
 distr (suc n) m k =
   (begin
     (suc n) * (m + k)
+  ≡⟨ refl ⟩
+    (m + k) + n * (m + k)
   ≡⟨ {!!} ⟩
-    (m + k) + n * m * k
-  ≡⟨ {!!} ⟩
+    (m + n * m) + (k + n * k)
+  ≡⟨ refl ⟩
     (suc n) * m + (suc n) * k
   ∎)
 
