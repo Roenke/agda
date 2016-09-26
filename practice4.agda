@@ -7,19 +7,8 @@ open import Data.Sum
 open import Data.Vec hiding (reverse) renaming (_++_ to _+V+_)
 open import Data.List hiding (reverse) renaming (_++_ to _+L+_)
 open import Relation.Binary.PropositionalEquality hiding (sym; trans; cong; cong₂)
-
--- 1. Доказать следующий факт.
-
-fac : ℕ → ℕ
-fac 0 = 1
-fac (suc n) = suc n * fac n
-
-_==_ : (ℕ → ℕ) → (ℕ → ℕ) → Set
-f == g = (x : ℕ) → f x ≡ g x
-
-lem : fac == suc → ⊥
-lem = {!!}
-
+open import Data.Bool
+open import Data.Unit
 -- 2. Определите симметричность, транзитивность и конгруэнтность при помощи паттерн матчинга.
 
 sym : {A : Set} {a a' : A} → a ≡ a' → a' ≡ a
@@ -31,10 +20,40 @@ trans = {!!}
 cong : {A B : Set} (f : A → B) {a a' : A} → a ≡ a' → f a ≡ f a'
 cong = {!!}
 
+
+-- 1. Доказать следующий факт.
+
+fac : ℕ → ℕ
+fac 0 = 1
+fac (suc n) = suc n * fac n
+
+_==_ : (ℕ → ℕ) → (ℕ → ℕ) → Set
+f == g = (x : ℕ) → f x ≡ g x
+
+D : ℕ → Set
+D zero = ⊥
+D (suc _) = ⊤
+
+infix 1 _=='_
+_=='_ : ℕ → ℕ → Bool
+0 ==' 0 = true
+0 ==' suc _ = false
+suc _ ==' 0 = false
+suc x ==' suc y = x ==' y
+
+≡-== : (x y : ℕ) → x ≡ y → T (x ==' y)
+≡-== zero zero p = tt
+≡-== zero (suc y) ()
+≡-== (suc x) zero p = subst D p tt
+≡-== (suc x) (suc y) p = ≡-== x y (cong pred p)
+
+lem : fac == suc → ⊥
+lem p = ≡-== (suc zero) (suc (suc zero)) (p 1)
+
 -- 3. Определите конгруэнтность для функций двух аргументов через subst.
 
 cong₂ : {A B C : Set} (f : A → B → C) {a a' : A} {b b' : B} → a ≡ a' → b ≡ b' → f a b ≡ f a' b'
-cong₂ = {!!}
+cong₂ f {a = a} {b = b} pb = ? 
 
 -- 4. Докажите дистрибутивность умножения над сложением для натуральных чисел.
 
