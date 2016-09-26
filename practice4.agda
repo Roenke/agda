@@ -12,13 +12,13 @@ open import Data.Unit
 -- 2. Определите симметричность, транзитивность и конгруэнтность при помощи паттерн матчинга.
 
 sym : {A : Set} {a a' : A} → a ≡ a' → a' ≡ a
-sym = {!!}
+sym refl = refl
 
 trans : {A : Set} {a a' a'' : A} → a ≡ a' → a' ≡ a'' → a ≡ a''
-trans = {!!}
+trans refl refl = refl
 
 cong : {A B : Set} (f : A → B) {a a' : A} → a ≡ a' → f a ≡ f a'
-cong = {!!}
+cong f refl = refl
 
 
 -- 1. Доказать следующий факт.
@@ -53,7 +53,7 @@ lem p = ≡-== (suc zero) (suc (suc zero)) (p 1)
 -- 3. Определите конгруэнтность для функций двух аргументов через subst.
 
 cong₂ : {A B C : Set} (f : A → B → C) {a a' : A} {b b' : B} → a ≡ a' → b ≡ b' → f a b ≡ f a' b'
-cong₂ f {a = a} {b = b} pb = ? 
+cong₂ f {a = a} {b = b} {b' = b'} pa pb = subst (λ x → f a b ≡ f x b') pa (subst (λ x → f a b ≡ f a x) pb refl)
 
 -- 4. Докажите дистрибутивность умножения над сложением для натуральных чисел.
 
@@ -70,7 +70,15 @@ open ≡-Reasoning
 +-comm (suc x) (suc y) = cong suc (trans (+-comm x (suc y)) (trans (cong suc (sym (+-comm x y))) (+-comm (suc x) y)))
 
 distr : (n m k : ℕ) → n * (m + k) ≡ n * m + n * k
-distr = {!!}
+distr zero _ _ = refl
+distr (suc n) m k =
+  (begin
+    (suc n) * (m + k)
+  ≡⟨ {!!} ⟩
+    (m + k) + n * m * k
+  ≡⟨ {!!} ⟩
+    (suc n) * m + (suc n) * k
+  ∎)
 
 -- 5. Докажите следующее утверждение.
 
