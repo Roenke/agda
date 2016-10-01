@@ -76,9 +76,27 @@ distr (suc n) m k =
     (suc n) * (m + k)
   ≡⟨ refl ⟩
     (m + k) + (n * (m + k))
-  ≡⟨ cong (λ x -> (m + k) + x) (distr n m k) ⟩
+  ≡⟨ cong (λ x → (m + k) + x) (distr n m k) ⟩
     (m + k) + (n * m + n * k)
-  ≡⟨ {!!} ⟩
+  ≡⟨ refl ⟩
+    m + k + (n * m + n * k)
+  ≡⟨ +-assoc m ⟩
+    m + (k + (n * m + n * k))
+  ≡⟨ cong (λ x → m + x) (+-comm k (n * m + n * k)) ⟩
+    m + ((n * m + n * k) + k)
+  ≡⟨ cong (λ x → m + x) (+-assoc (n * m)) ⟩
+    m + (n * m + (n * k + k))
+  ≡⟨ cong (λ x → m + x) (+-comm (n * m)  (n * k + k)) ⟩
+    m + ((n * k + k) + n * m)
+  ≡⟨ +-comm m ((n * k + k) + n * m) ⟩
+    ((n * k + k) + n * m) + m
+  ≡⟨ +-assoc (n * k + k) ⟩
+    (n * k + k) + (n * m + m)
+  ≡⟨ cong (λ x → x + (n * m + m)) (+-comm (n * k) k) ⟩
+    (k + n * k) + (n * m + m)
+  ≡⟨ cong (λ x → (k + n * k) + x) (+-comm (n * m) m) ⟩
+    (k + n * k) + (m + n * m)
+  ≡⟨ +-comm (k + n * k) (m + n * m) ⟩
     (m + n * m) + (k + n * k)
   ≡⟨ refl ⟩
     (suc n) * m + (suc n) * k
