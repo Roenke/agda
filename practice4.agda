@@ -110,12 +110,13 @@ reverse (x ∷ xs) = reverse xs +L+ x ∷ []
 
 reverse-inv : {A : Set} (xs : List A) → reverse (reverse xs) ≡ xs
 reverse-inv [] = refl
-reverse-inv xs = {!!}
-
+reverse-inv (x ∷ xs) = {!!}
 -- 6. Докажите следующее утверждение.
 
 reverse-append : {A : Set} (xs ys : List A) → reverse (xs +L+ ys) ≡ reverse ys +L+ reverse xs
-reverse-append = {!!}
+reverse-append [] [] = refl
+reverse-append [] (y ∷ ys) = {!!}
+reverse-append (x ∷ xs) ys = {!!}
 
 -- 7. Докажите, что [] является нейтральным элементом для ++.
 
@@ -124,12 +125,24 @@ reverse-append = {!!}
 
 -- 8. Определите reverse для Vec через аккумулятор.
 
-rev-acc : {A : Set} {n m : ℕ} → Vec A n → Vec A m → Vec A (m + n)
-rev-acc {m = 0} acc _ = acc
-rev-acc acc (x ∷ xs) = {!!} --rev-acc (x ∷ acc) xs
+proof : {A : Set} (n m : ℕ) → suc (n + m) ≡ n + suc m
+proof 0 0 = refl
+proof n m = begin
+    suc (n + m)
+  ≡⟨ cong suc (+-comm n m) ⟩
+    suc (m + n)
+  ≡⟨ refl ⟩
+    suc m + n
+  ≡⟨ +-comm (suc m) n ⟩
+    n + suc m
+  ∎
+
+rev-acc : {A : Set} {n m : ℕ} → Vec A n → Vec A m → Vec A (n + m)
+rev-acc {A} {n = n} acc [] = subst (Vec A) (+-comm 0 n) acc
+rev-acc {A} {n} {suc m} acc (x ∷ xs) = subst (Vec A) (proof {A} n m) (rev-acc (x ∷ acc) xs)
 
 rev : {A : Set} {n : ℕ} → Vec A n → Vec A n
-rev xs = {!!} --rev-acc [] xs
+rev {A = A} {n} xs = rev-acc [] xs
 
 -- 9. Докажите, что [] не равно x ∷ xs при помощи паттер матчинга.
 
@@ -138,5 +151,9 @@ List-diff x xs ()
 
 -- 10. Докажите, что [] не равно x ∷ xs при помощи subst.
 
+D' : {A : Set} → List A → Set
+D' [] = ⊥
+D' (x ∷ _) = ⊤
+
 List-diff' : {A : Set} (x : A) (xs : List A) → _≡_ {A = List A} [] (x ∷ xs) → ⊥
-List-diff' = ?
+List-diff' {A} x xs p = {!!} --p [] (x ∷ xs)
