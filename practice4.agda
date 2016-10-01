@@ -109,7 +109,8 @@ reverse [] = []
 reverse (x ∷ xs) = reverse xs +L+ x ∷ []
 
 reverse-inv : {A : Set} (xs : List A) → reverse (reverse xs) ≡ xs
-reverse-inv = {!!}
+reverse-inv [] = refl
+reverse-inv xs = {!!}
 
 -- 6. Докажите следующее утверждение.
 
@@ -123,15 +124,19 @@ reverse-append = {!!}
 
 -- 8. Определите reverse для Vec через аккумулятор.
 
+rev-acc : {A : Set} {n m : ℕ} → Vec A n → Vec A m → Vec A (m + n)
+rev-acc {m = 0} acc _ = acc
+rev-acc acc (x ∷ xs) = {!!} --rev-acc (x ∷ acc) xs
+
 rev : {A : Set} {n : ℕ} → Vec A n → Vec A n
-rev = {!!}
+rev xs = {!!} --rev-acc [] xs
 
 -- 9. Докажите, что [] не равно x ∷ xs при помощи паттер матчинга.
 
 List-diff : {A : Set} (x : A) (xs : List A) → _≡_ {A = List A} [] (x ∷ xs) → ⊥
-List-diff = {!!}
+List-diff x xs ()
 
 -- 10. Докажите, что [] не равно x ∷ xs при помощи subst.
 
 List-diff' : {A : Set} (x : A) (xs : List A) → _≡_ {A = List A} [] (x ∷ xs) → ⊥
-List-diff' = {!!}
+List-diff' = ?
