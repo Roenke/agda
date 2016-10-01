@@ -75,7 +75,9 @@ distr (suc n) m k =
   (begin
     (suc n) * (m + k)
   ≡⟨ refl ⟩
-    (m + k) + n * (m + k)
+    (m + k) + (n * (m + k))
+  ≡⟨ cong (λ x -> (m + k) + x) (distr n m k) ⟩
+    (m + k) + (n * m + n * k)
   ≡⟨ {!!} ⟩
     (m + n * m) + (k + n * k)
   ≡⟨ refl ⟩
