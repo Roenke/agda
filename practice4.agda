@@ -102,44 +102,51 @@ distr (suc n) m k =
     (suc n) * m + (suc n) * k
   ∎)
 
--- 5. Докажите следующее утверждение.
+-- 6. Докажите следующее утверждение.
+
 
 reverse : {A : Set} → List A → List A
 reverse [] = []
 reverse (x ∷ xs) = reverse xs +L+ x ∷ []
+
+reverse-append : {A : Set} (xs ys : List A) → reverse (xs +L+ ys) ≡ reverse ys +L+ reverse xs
+reverse-append [] [] = refl
+reverse-append [] (y ∷ ys) = 
+  begin
+    reverse ([] +L+ (y ∷ ys))
+  ≡⟨ refl ⟩
+    reverse (y ∷ ys)
+  ≡⟨ refl ⟩
+    (reverse ys) +L+ (y ∷ [])
+  ≡⟨ refl ⟩
+    (reverse ys) +L+ (reverse (y ∷ []))
+  ≡⟨ refl ⟩
+    (reverse ys) +L+ (reverse (y ∷ []))
+  ≡⟨ {!!} ⟩
+    reverse (y ∷ ys) +L+ reverse []
+  ∎
+
+reverse-append (x ∷ xs) ys = {!!}
+
+-- 5. Докажите следующее утверждение.
 
 reverse-inv : {A : Set} (xs : List A) → reverse (reverse xs) ≡ xs
 reverse-inv [] = refl
 reverse-inv {A} (x ∷ xs) =
   begin 
     reverse (reverse (x ∷ xs))
-  ≡⟨ cong reverse refl ⟩
+  ≡⟨ refl ⟩
     reverse (reverse (xs) +L+ x ∷ [])
-  ≡⟨ {!!} ⟩
+  ≡⟨ reverse-append (reverse xs) (x ∷ []) ⟩
     x ∷ (reverse (reverse xs))
-  ≡⟨ {!!} ⟩
+  ≡⟨ cong (λ y → x ∷ y) (reverse-inv xs) ⟩
     (x ∷ xs)
   ∎
-
--- 6. Докажите следующее утверждение.
-
-reverse-append : {A : Set} (xs ys : List A) → reverse (xs +L+ ys) ≡ reverse ys +L+ reverse xs
-reverse-append [] [] = refl
-reverse-append [] (y ∷ ys) = {!!}
- {- begin
-    reverse ([] +L+ (y ∷ ys))
-  ≡⟨ cong reverse refl ⟩
-    reverse (y ∷ ys)
-  ≡⟨ {!!} ⟩
-    reverse (y ∷ ys) +L+ reverse []
-  ∎-}
-
-reverse-append (x ∷ xs) ys = {!!}
 
 -- 7. Докажите, что [] является нейтральным элементом для ++.
 
 []-is-neutral : {A : Set} {n : ℕ} (xs : Vec A n) → subst (Vec A) (+-comm n 0) (xs +V+ []) ≡ xs
-[]-is-neutral xs = ?
+[]-is-neutral xs = {!!}
 
 -- 8. Определите reverse для Vec через аккумулятор.
 
