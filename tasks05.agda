@@ -113,11 +113,35 @@ record Functor (F : Set → Set) : Set₁ where
     fmap-comp : {A B C : Set} (f : A → B) (g : B → C) (a : F A) → fmap (λ x → g (f x)) a ≡ fmap g (fmap f a)
 
 data Maybe (A : Set) : Set where
+  nothing : Maybe A
+  just : A → Maybe A
+
+fmap-maybe : {A B : Set} → (A → B) → Maybe A → Maybe B
+fmap-maybe f nothing = nothing
+fmap-maybe f (just x) = just (f x)
+
+fmap-maybe-id : {A : Set} (a : Maybe A) → fmap-maybe (λ x → x) a ≡ a
+fmap-maybe-id nothing = refl
+fmap-maybe-id (just x) = refl
+
+fmap-maybe-comp : {A B C : Set} (f : A → B) (g : B → C) (a : Maybe A) → fmap-maybe (λ x → g (f x)) a ≡ fmap-maybe g (fmap-maybe f a)
+fmap-maybe-comp f g nothing = refl
+fmap-maybe-comp f g (just x) = refl
 
 Maybe-Functor : Functor Maybe
-Maybe-Functor = {!!}
-
+Maybe-Functor = record
+                { fmap = fmap-maybe
+                ; fmap-id = fmap-maybe-id
+                ; fmap-comp = fmap-maybe-comp
+                }
+                
 Maybe-Monad : Monad Maybe
-Maybe-Monad = {!!}
+Maybe-Monad = record
+                { return = just 
+                ; _>>=_ = {!!}
+                ; left-id = {!!}
+                ; right-id = {!!}
+                ; assoc = {!!}
+                }
 
 -- 6. Реализуйте sscanf.
