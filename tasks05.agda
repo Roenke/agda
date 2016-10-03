@@ -9,13 +9,42 @@ open import Relation.Binary.PropositionalEquality
 -- 1. Используя тип List, определите тип данных (через зависимые записи) списков длины n (число должно быть параметром записи).
 --    Реализуйте для такого типа функции head и tail.
 
+list-len : {A : Set} → List A → ℕ
+list-len [] = zero
+list-len (x ∷ xs) = suc (list-len xs)
+
+record ListN (A : Set) (n : ℕ) : Set where
+  constructor lst
+  field
+    list : List A
+    len-eq-n : (list-len list) ≡ n
+
+headN : {A : Set} {n : ℕ} → ListN A (suc n) → A
+headN (lst [] ())  
+headN (lst (x ∷ _) _) = x
+
+tailN : {A : Set} {n : ℕ} → ListN A (suc n) → ListN A n
+tailN (lst [] ())
+tailN (lst (_ ∷ xs) _) = lst xs {!!}
+
 -- 2. Определите тип (через зависимые записи) четных натуральных чисел.
 --    Определите функцию деления на 2.
 
+isEven : ℕ → Bool
+isEven zero = true
+isEven (suc zero) = false
+isEven (suc (suc x)) = isEven x
+
 record Evenℕ : Set where
+  constructor evenNum
+  field
+    num : ℕ
+    even : T (isEven num)
 
 div2 : Evenℕ → ℕ
-div2 = {!!}
+div2 (evenNum (suc zero) ())
+div2 (evenNum (zero) _) = zero
+div2 (evenNum (suc (suc n)) p) = suc (div2 (evenNum n p))
 
 -- 3. Постройте структуру моноида на типе натуральных чисел (т.е. нужно сконструировать элемент соответствующей записи).
 
