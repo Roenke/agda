@@ -25,7 +25,7 @@ headN (lst (x ∷ _) _) = x
 
 tailN : {A : Set} {n : ℕ} → ListN A (suc n) → ListN A n
 tailN (lst [] ())
-tailN (lst (_ ∷ xs) _) = lst xs {!!}
+tailN (lst (x ∷ xs) p) = lst xs ?
 
 -- 2. Определите тип (через зависимые записи) четных натуральных чисел.
 --    Определите функцию деления на 2.
@@ -159,3 +159,8 @@ Maybe-Monad = record
                 }
 
 -- 6. Реализуйте sscanf.
+-- sscanf : List Char → List Char → ? 
+
+-- 7. Реализуйте монаду Writer
+
+-- Writer-Monad : Monad 
