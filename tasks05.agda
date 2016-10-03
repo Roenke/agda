@@ -25,7 +25,7 @@ headN (lst (x ∷ _) _) = x
 
 tailN : {A : Set} {n : ℕ} → ListN A (suc n) → ListN A n
 tailN (lst [] ())
-tailN (lst (_ ∷ xs) _) = lst xs {!!}
+tailN (lst (_ ∷ xs) _) = lst xs ?
 
 -- 2. Определите тип (через зависимые записи) четных натуральных чисел.
 --    Определите функцию деления на 2.
@@ -57,8 +57,40 @@ record Monoid : Set₁ where
     id-left : (x : A) → id # x ≡ x
     id-right : (x : A) → x # id ≡ x
 
++-assoc : (x y z : ℕ) → (x + y) + z ≡ x + (y + z)
++-assoc zero _ _ = refl
++-assoc (suc x) y z = cong suc (+-assoc x y z)
+
+id-left' : (n : ℕ) → 0 + n ≡ n
+id-left' n = refl
+
++-comm : (x y : ℕ) → x + y ≡ y + x
++-comm zero zero = refl
++-comm zero (suc y) = cong suc (+-comm zero y)
++-comm (suc x) zero = cong suc (+-comm x zero)
++-comm (suc x) (suc y) = cong suc (trans (+-comm x (suc y)) (trans (cong suc (sym (+-comm x y))) (+-comm (suc x) y)))
+
+open ≡-Reasoning
+
+id-right' : (n : ℕ) → n + 0 ≡ n
+id-right' n =
+  begin
+    n + 0
+  ≡⟨ +-comm n 0 ⟩
+    0 + n
+  ≡⟨ refl ⟩
+    n
+  ∎
+
 ℕ-Monoid : Monoid
-ℕ-Monoid = {!!}
+ℕ-Monoid =  record
+              { A = ℕ
+              ; id = 0
+              ; _#_ = _+_
+              ; assoc = +-assoc
+              ; id-left = id-left'
+              ; id-right = id-right'
+              }
 
 -- 4. Напишите тип монады (через зависимые записи).
 --    Элементы этого типа должны удовлетворять всем законом монад.
