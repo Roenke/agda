@@ -25,7 +25,7 @@ headN (lst (x ∷ _) _) = x
 
 tailN : {A : Set} {n : ℕ} → ListN A (suc n) → ListN A n
 tailN (lst [] ())
-tailN (lst (_ ∷ xs) _) = lst xs ?
+tailN (lst (_ ∷ xs) _) = lst xs {!!}
 
 -- 2. Определите тип (через зависимые записи) четных натуральных чисел.
 --    Определите функцию деления на 2.
@@ -96,7 +96,14 @@ id-right' n =
 --    Элементы этого типа должны удовлетворять всем законом монад.
 
 record Monad (M : Set → Set) : Set₁ where
+  field
+    return : {A : Set} → A → M A
+    _>>=_ : {A B : Set} → M A → (A → M B) → M B
 
+    left-id : {A B : Set} (a : A) (f : A → M B) → (return a) >>= f ≡ f a
+    right-id : {A : Set} (m : M A) → m >>= return ≡ m
+    assoc : {A : Set} (m : M A) (B C : Set) (f : A → M B) (g : B → M C) → (m >>= f) >>= g ≡ (m >>= (λ x → f x >>= g))
+  
 -- 5. Определите тип данных Maybe, сконструируйте структуру функтора и монады на этом типе.
 
 record Functor (F : Set → Set) : Set₁ where
