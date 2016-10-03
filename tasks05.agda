@@ -102,7 +102,7 @@ record Monad (M : Set → Set) : Set₁ where
 
     left-id : {A B : Set} (a : A) (f : A → M B) → (return a) >>= f ≡ f a
     right-id : {A : Set} (m : M A) → m >>= return ≡ m
-    assoc : {A : Set} (m : M A) (B C : Set) (f : A → M B) (g : B → M C) → (m >>= f) >>= g ≡ (m >>= (λ x → f x >>= g))
+    assoc : {A B C : Set} (m : M A) (f : A → M B) (g : B → M C) → (m >>= f) >>= g ≡ (m >>= (λ x → f x >>= g))
   
 -- 5. Определите тип данных Maybe, сконструируйте структуру функтора и монады на этом типе.
 
@@ -134,14 +134,28 @@ Maybe-Functor = record
                 ; fmap-id = fmap-maybe-id
                 ; fmap-comp = fmap-maybe-comp
                 }
-                
+
+maybe-bind : {A B : Set} → Maybe A → (A → Maybe B) → Maybe B
+maybe-bind nothing _ = nothing
+maybe-bind (just x) f = f x
+
+maybe-right-id : {A : Set} (m : Maybe A) → maybe-bind m just ≡ m
+maybe-right-id nothing = refl
+maybe-right-id (just _) = refl
+
+_>>=_ : {A B : Set} → Maybe A → (A → Maybe B) → Maybe B
+_>>=_ = maybe-bind
+maybe-assoc : {A B C : Set} (m : Maybe A) (f : A → Maybe B) (g : B → Maybe C) → (m >>= f) >>= g ≡ (m >>= (λ x → f x >>= g))
+maybe-assoc nothing f g = refl 
+maybe-assoc (just _) f g = refl
+
 Maybe-Monad : Monad Maybe
 Maybe-Monad = record
                 { return = just 
-                ; _>>=_ = {!!}
-                ; left-id = {!!}
-                ; right-id = {!!}
-                ; assoc = {!!}
+                ; _>>=_ = maybe-bind
+                ; left-id = λ a f → refl
+                ; right-id = maybe-right-id
+                ; assoc = maybe-assoc
                 }
 
 -- 6. Реализуйте sscanf.
