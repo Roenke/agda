@@ -23,9 +23,12 @@ headN : {A : Set} {n : ℕ} → ListN A (suc n) → A
 headN (lst [] ())  
 headN (lst (x ∷ _) _) = x
 
+proof : {A : Set} {n : ℕ} → (x : A) → (xs : List A) → (list-len (x ∷ xs)) ≡ (suc n) → (list-len xs) ≡ n
+proof {A = A} x xs p = cong pred p
+
 tailN : {A : Set} {n : ℕ} → ListN A (suc n) → ListN A n
 tailN (lst [] ())
-tailN (lst (x ∷ xs) p) = lst xs ?
+tailN (lst (x ∷ xs) p) = lst xs (proof x xs p)
 
 -- 2. Определите тип (через зависимые записи) четных натуральных чисел.
 --    Определите функцию деления на 2.
