@@ -1,6 +1,7 @@
 module tasks06 where
 
 open import Data.Nat hiding (_<_)
+open import Data.Nat.Properties
 open import Data.List hiding (filter)
 open import Data.Bool
 open import Relation.Binary.PropositionalEquality
@@ -33,19 +34,49 @@ sort xs = sort' [] xs
 
 filter : {A : Set} → (A → Bool) → List A → List A
 filter _ [] = []
-filter p (x ∷ xs) = if (p x) then (x ∷ (filter p xs)) else (filter p xs)
+filter p (x ∷ xs) = if (p x)  then (x ∷ (filter p xs)) else (filter p xs)
 
 lem : {A : Set} (p : A → Bool) (xs : List A) → length (filter p xs) ≤ length xs
 lem p [] = z≤n
-lem p (x ∷ xs) = {!!}
+lem p (x ∷ xs) with p x 
+lem p (x ∷ xs) | true = s≤s (lem p xs)
+lem p (x ∷ xs) | false = ≤-step (lem p xs)
 
 -- 3. Докажите, что если равенство элементов A разрешимо, то и равенство элементов List A тоже разрешимо.
 
 DecEq : Set → Set
 DecEq A = (x y : A) → Dec (x ≡ y)
 
+head : {A : Set} → (xs : List A) → T (0 < length xs) → A
+head [] ()
+head (x ∷ xs) _ = x
+
+head' : {A : Set} → A → List A → A
+head' def [] = def
+head' _ (x ∷ xs) = x
+
+proof : {A : Set} (x y : A) (xs ys : List A) → (x ∷ xs) ≡ (y ∷ ys) → x ≡ y
+proof x y xs ys = cong (head' x)
+
+tail : {A : Set} → List A → List A
+tail [] = []
+tail (x ∷ xs) = xs
+
+proof' : {A : Set} (x y : A) (xs ys : List A) → (x ∷ xs) ≡ (y ∷ ys) → xs ≡ ys
+proof' x y xs ys = cong tail
+
+proof'' : {A : Set} (x y : A) (xs ys : List A) → x ≡ y → xs ≡ ys → (x ∷ xs) ≡ (y ∷ ys)
+proof'' x .x xs .xs refl refl = refl
+
 List-Dec : {A : Set} → DecEq A → DecEq (List A)
-List-Dec = {!!}
+List-Dec _ [] [] = yes refl
+List-Dec _ [] (y ∷ ys) = no (λ ())
+List-Dec _ (x ∷ xs) [] = no (λ ())
+List-Dec eq (x ∷ xs) (y ∷ ys) with eq x y | List-Dec eq xs ys
+List-Dec eq (x ∷ xs) (y ∷ ys) | yes p | yes p₁ = yes (proof'' x y xs ys p p₁)
+List-Dec eq (x ∷ xs) (y ∷ ys) | yes p | no ¬p = no (λ q → ¬p (proof' x y xs ys q))
+List-Dec eq (x ∷ xs) (y ∷ ys) | no ¬p | yes p = no (λ q → ¬p (proof x y xs ys q))
+List-Dec eq (x ∷ xs) (y ∷ ys) | no ¬p | no ¬p₁ = no (λ q → ¬p (proof x y xs ys q))
 
 -- 4. Докажите, что предикат isEven разрешим.
 
@@ -56,7 +87,7 @@ isEven : ℕ → Set
 isEven n = Σ ℕ (λ k → n ≡ k * 2)
 
 isEven-Dec : DecPred isEven
-isEven-Dec = {!!}
+isEven-Dec n = {!!}
 
 -- 5. Докажите, что если равенство элементов A разрешимо, то любой список элементов A либо пуст, либо состоит из повторений одного элемента, либо в A существует два различных элемента.
 
