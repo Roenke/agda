@@ -117,7 +117,9 @@ data Result (A : Set) (xs : List A) : Set where
   A-is-not-trivial : (a a' : A) → ¬ (a ≡ a') → Result A xs
 
 lemma : {A : Set} (xs : List A) → DecEq A → Result A xs
-lemma = {!!}
+lemma [] _ = empty refl
+lemma (x ∷ []) p = repeated 1 x refl
+lemma (x ∷ y ∷ xs) p = ?
 
 -- 6. Определите view, представляющий число в виде частного и остатка от деления его на произвольное (неотрицательное) число m.
 --    Реализуйте функцию деления.
@@ -129,8 +131,22 @@ isPos : ℕ → Bool
 isPos 0 = false
 isPos _ = true
 
+open import Data.Unit
+
+_<'_ : ℕ → ℕ → Bool
+0 <' 0 = false
+0 <' _ = true
+x <' 0 = false
+(suc x) <' (suc y) = x <' y
+
+
 mod-view : (m n : ℕ) → T (isPos m) → ModView m n
-mod-view = {!!}
+mod-view 0 _ ()
+mod-view (suc _) 0 p = quot-rem 0 0 p
+mod-view (suc m) (suc n) p with mod-view (suc m) n p
+mod-view (suc m) (suc .(r + q * (suc m))) p | quot-rem q r p' = if ((suc r) <' (suc m)) then (quot-rem q (suc r) {!!}) else ({!!})
 
 div : ℕ → (m : ℕ) → T (isPos m) → ℕ
-div n m p = {!!}
+div _ zero ()
+div x m p with mod-view m x p
+div .(r + q * m) m p | quot-rem q r _ = q
