@@ -128,6 +128,8 @@ lemma (x ∷ xs) eq | A-is-not-trivial x1 x2 p = A-is-not-trivial x1 x2 p
 -- 6. Определите view, представляющий число в виде частного и остатка от деления его на произвольное (неотрицательное) число m.
 --    Реализуйте функцию деления.
 
+open import Data.Unit
+
 data ModView (m : ℕ) : ℕ → Set where
   quot-rem : ∀ q r → T (r < m) → ModView m (r + q * m)
 
@@ -135,20 +137,43 @@ isPos : ℕ → Bool
 isPos 0 = false
 isPos _ = true
 
-open import Data.Unit
+data Ordered : ℕ → ℕ → Set where
+  lt : ∀ n m → T (n < m) → Ordered n m
+  eq : ∀ n m → n ≡ m → Ordered n m
+  gt : ∀ n m → T (m < n) → Ordered n m
 
-_<'_ : ℕ → ℕ → Bool
-0 <' 0 = false
-0 <' _ = true
-x <' 0 = false
-(suc x) <' (suc y) = x <' y
+order : (n m : ℕ) → Ordered n m
+order 0 0 = eq 0 0 refl
+order 0 (suc x) = lt 0 (suc x) tt
+order (suc x) 0 = gt (suc x) 0 tt
+order (suc x) (suc y) with order x y
+order (suc x) (suc y) | lt .x .y p = lt (suc x) (suc y) p
+order (suc x) (suc y) | eq .x .y p = eq (suc x) (suc y) (cong suc p)
+order (suc x) (suc y) | gt .x .y p = gt (suc x) (suc y) p
 
+open ≡-Reasoning
+
+lemma1 : (m q r : ℕ) → r ≡ m → suc(m + q * suc m) ≡ suc (r + q * suc m)
+lemma1 m q r p = cong suc (begin 
+    m + q * suc m
+  ≡⟨ cong (λ x → x + q * suc m) (sym p) ⟩
+    r + q * suc m
+  ∎)
+
+lemma2 : (m r : ℕ) → T (m < r) → ¬ T (r < suc m) 
+lemma2 _ 0 ()
+lemma2 0 (suc x) p ()
+lemma2 (suc m) (suc r) p1 p2 = lemma2 m r p1 p2
 
 mod-view : (m n : ℕ) → T (isPos m) → ModView m n
 mod-view 0 _ ()
 mod-view (suc _) 0 p = quot-rem 0 0 p
 mod-view (suc m) (suc n) p with mod-view (suc m) n p
-mod-view (suc m) (suc .(r + q * (suc m))) p | quot-rem q r p' = if ((suc r) <' (suc m)) then (quot-rem q (suc r) {!!}) else ({!!})
+mod-view (suc m) (suc .(r + q * (suc m))) p | quot-rem q r p' with order r m
+mod-view (suc m) (suc .(r + q * (suc m))) p | quot-rem q r p' | lt .r .m pr = quot-rem q (suc r) pr
+mod-view (suc m) (suc .(r + q * (suc m))) p | quot-rem q r p' | eq .r .m pr = subst (ModView (suc m)) (lemma1 m q r pr) (quot-rem (suc q) 0 p)
+mod-view (suc m) (suc .(r + q * (suc m))) p | quot-rem q r p' | gt .r .m pr with lemma2 m r pr p'
+mod-view (suc m) (suc .(r + q * (suc m))) p | quot-rem q r p' | gt .r .m pr | ()
 
 div : ℕ → (m : ℕ) → T (isPos m) → ℕ
 div _ zero ()
