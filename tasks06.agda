@@ -86,9 +86,25 @@ DecPred {A} P = (a : A) → Dec (P a)
 isEven : ℕ → Set
 isEven n = Σ ℕ (λ k → n ≡ k * 2)
 
-isEven-Dec : DecPred isEven
-isEven-Dec n = {!!}
+data Nat : ℕ → Set where
+  even : (k : ℕ) → Nat (k * 2)
+  odd : (k : ℕ) → Nat (suc (k * 2))
 
+toNat : (n : ℕ) → Nat n
+toNat 0 = even 0
+toNat (suc 0) = odd 0
+toNat (suc x) with toNat x
+toNat (suc .(k * 2)) | even k = odd k
+toNat (suc .(suc (k * 2))) | odd k = even (suc k)
+
+isEven-Dec : DecPred isEven
+isEven-Dec n with toNat n
+isEven-Dec .(k * 2) | even k = yes (k , refl)
+isEven-Dec .(suc(k * 2)) | odd k = no (λ x → proof-neg (proj₁ x) k (proj₂ x) ) where
+  proof-neg : (n m : ℕ) → ¬(suc(m * 2) ≡  n * 2)
+  proof-neg 0 m ()
+  proof-neg (suc n) 0 ()
+  proof-neg (suc n) (suc m) p = proof-neg n m (cong (λ x → pred (pred x)) p)
 -- 5. Докажите, что если равенство элементов A разрешимо, то любой список элементов A либо пуст, либо состоит из повторений одного элемента, либо в A существует два различных элемента.
 
 repeat : {A : Set} → ℕ → A → List A
