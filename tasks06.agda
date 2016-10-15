@@ -118,8 +118,12 @@ data Result (A : Set) (xs : List A) : Set where
 
 lemma : {A : Set} (xs : List A) → DecEq A → Result A xs
 lemma [] _ = empty refl
-lemma (x ∷ []) p = repeated 1 x refl
-lemma (x ∷ y ∷ xs) p = ?
+lemma (x ∷ xs) eq with lemma xs eq
+lemma (x ∷ xs) eq | empty p = repeated 1 x (proof'' x x xs [] refl p) 
+lemma (x ∷ xs) eq | repeated n e p with eq x e
+lemma (x ∷ xs) eq | repeated n e p | yes pr = repeated (1 + n) e (proof'' x e xs (repeat n e) pr p)
+lemma (x ∷ xs) eq | repeated n e p | no ¬pr = A-is-not-trivial x e ¬pr
+lemma (x ∷ xs) eq | A-is-not-trivial x1 x2 p = A-is-not-trivial x1 x2 p
 
 -- 6. Определите view, представляющий число в виде частного и остатка от деления его на произвольное (неотрицательное) число m.
 --    Реализуйте функцию деления.
