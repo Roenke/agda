@@ -1,5 +1,6 @@
 module tasks07 where
 
+{- OPTIONS -}
 open import Data.Nat hiding (_≤_)
 open import Data.List hiding (filter)
 open import Data.Unit hiding (_≤_)
@@ -10,6 +11,25 @@ open import Data.Product
 
 -- 1. Определите тип бесконечных бинарных деревьев, реализуйте для них функции map и reflect, которая отражает дерево горизонтально.
 
+record Tree (A : Set) : Set where
+  coinductive
+  field
+    node : A
+    left : Tree A
+    right : Tree A
+
+open Tree
+
+tree-map : {A B : Set} → (A → B) → Tree A → Tree B
+node (tree-map f tree) = f (node tree)
+left (tree-map f tree) = tree-map f (left tree)
+right (tree-map f tree) = tree-map f (right tree)
+
+reflect : {A : Set} → Tree A → Tree A
+node (reflect t) = node t
+left (reflect t) = reflect (right t)
+right (reflect t) = reflect (left t)
+
 -- 2. Докажите эквивалентность <= и ≤.
 
 _<=_ : ℕ → ℕ → Bool
@@ -17,14 +37,14 @@ _<=_ : ℕ → ℕ → Bool
 suc _ <= 0 = false
 suc n <= suc k = n <= k
 
-data _≤_ : ℕ → ℕ → Set where
-  z≤n : {n : ℕ} → 0 ≤ n
-  s≤s : {n k : ℕ} → n ≤ k → suc n ≤ suc k
+data _≤'_ : ℕ → ℕ → Set where
+  z≤n : {n : ℕ} → 0 ≤' n
+  s≤s : {n k : ℕ} → n ≤' k → suc n ≤' suc k
 
-<=-≤ : (n k : ℕ) → T (n <= k) → n ≤ k
+<=-≤ : (n k : ℕ) → T (n <= k) → n ≤' k
 <=-≤ = {!!}
 
-≤-<= : {n k : ℕ} → n ≤ k → T (n <= k)
+≤-<= : {n k : ℕ} → n ≤' k → T (n <= k)
 ≤-<= = {!!}
 
 -- 3. Докажите эквивалентность isSorted и isSorted'.
