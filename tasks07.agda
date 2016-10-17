@@ -76,9 +76,19 @@ module Sorted₁ (A : Set) (_≤_ : A → A → Set) where
 
 -- 4. Определите предикат принадлежности элемента списку.
 
-data _∈_ {A : Set} (a : A) : List A → Set where
+tail' : {A : Set} → List A → List A
+tail' [] = []
+tail' (x ∷ xs) = xs
 
+data _∈_ {A : Set} (a : A) :  List A → Set where
+  head : (xs : List A) → a ∈ (a ∷ xs)
+  tail : (x : A) (xs : List A) → a ∈ xs → a ∈ (x ∷ xs)
+  
 -- 5. Определите предикат xs ⊆ ys, означающий "список xs является подсписком ys".
+
+data _⊆_ {A : Set} (xs : List A) : List A → Set where
+ -- empty : (zs : List A) (ys : List A) → [] ⊆ ys
+  --sublist : ? 
 
 -- 6. Докажите, что filter xs ⊆ xs для любого списка xs.
 
