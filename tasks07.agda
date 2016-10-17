@@ -42,10 +42,13 @@ data _≤'_ : ℕ → ℕ → Set where
   s≤s : {n k : ℕ} → n ≤' k → suc n ≤' suc k
 
 <=-≤ : (n k : ℕ) → T (n <= k) → n ≤' k
-<=-≤ = {!!}
+<=-≤ 0 _ tt = z≤n
+<=-≤ (suc n) 0 ()
+<=-≤ (suc n) (suc k) p = s≤s (<=-≤ n k p)
 
 ≤-<= : {n k : ℕ} → n ≤' k → T (n <= k)
-≤-<= = {!!}
+≤-<= z≤n = tt
+≤-<= (s≤s p) = {!!}
 
 -- 3. Докажите эквивалентность isSorted и isSorted'.
 
@@ -63,10 +66,13 @@ module Sorted₁ (A : Set) (_≤_ : A → A → Set) where
     cons : (x : A) (xs : List A) → leqHead x xs → isSorted' xs → isSorted' (x ∷ xs)
   
   isSorted-isSorted' : (xs : List A) → isSorted xs → isSorted' xs
-  isSorted-isSorted' = {!!}
+  isSorted-isSorted' [] s = nil
+  isSorted-isSorted' (x ∷ []) s = cons x [] tt nil
+  isSorted-isSorted' (x ∷ y ∷ xs) (s1 , s2 , s3) = cons x (y ∷ xs) (s1) (isSorted-isSorted' (y ∷ xs) (s2 , s3))
   
   isSorted'-isSorted : {xs : List A} → isSorted' xs → isSorted xs
-  isSorted'-isSorted = {!!}
+  isSorted'-isSorted nil = tt
+  isSorted'-isSorted (cons x xs p1 p2) = p1 , (isSorted'-isSorted p2)
 
 -- 4. Определите предикат принадлежности элемента списку.
 
