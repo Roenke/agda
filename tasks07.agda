@@ -167,3 +167,17 @@ module Sort (A : Set) (_≤_ : A → A → Bool) where
 
 -- 10. Определите тип бинарных сортированных деревьев.
 --    То есть таких деревьев, в которых для любого узла верно, что все элементы в левом поддереве меньше либо равны, чем значение в узле, которое меньше либо равно, чем все элементы в правом поддереве.
+module BinaryTree (A : Set) (_≤_ : A → A → Set) where
+  mutual
+    data BinTree : Set where
+      empty : BinTree
+      inner : (a : A) (left right : BinTree) → leLeft a left → gtRight a right → BinTree
+
+    leLeft : A → BinTree → Set
+    leLeft _ empty = ⊤
+    leLeft x (inner a _ _ _ _) = x ≤ a
+
+    gtRight : A → BinTree → Set
+    gtRight _ empty = ⊤
+    gtRight x (inner a _ _ _ _) = x ≤ a
+      
