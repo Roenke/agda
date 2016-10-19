@@ -89,9 +89,18 @@ data _⊆_ {A : Set} : (xs : List A) → (ys : List A) → Set where
   empty : [] ⊆ []
   other : (a : A) (xs ys : List A) → (xs ⊆ ys) → (xs ⊆ (a ∷ ys))
   same : (a : A) (xs ys : List A) → (xs ⊆ ys) → ((a ∷ xs) ⊆ (a ∷ ys))
-  --sublist : ? 
 
 -- 6. Докажите, что filter xs ⊆ xs для любого списка xs.
+
+filter' : {A : Set} → (A → Bool) → List A → List A
+filter' _ [] = []
+filter' p (x ∷ xs) = if (p x) then (x ∷ filter' p xs) else (filter' p xs)
+
+lem : {A : Set} (xs : List A) → (p : A → Bool) → filter' p xs ⊆ xs
+lem [] _ = empty
+lem (x ∷ xs) p with (p x)
+lem (x ∷ xs) p | true = same x (filter' p xs) xs (lem xs p)
+lem (x ∷ xs) p | false = other x (filter' p xs) xs (lem xs p)
 
 -- 7*. Докажите следующее утверждение.
 
