@@ -1,6 +1,5 @@
 module tasks07 where
 
-{- OPTIONS -}
 open import Data.Nat hiding (_≤_)
 open import Data.List hiding (filter)
 open import Data.Unit hiding (_≤_)
@@ -86,8 +85,10 @@ data _∈_ {A : Set} (a : A) :  List A → Set where
   
 -- 5. Определите предикат xs ⊆ ys, означающий "список xs является подсписком ys".
 
-data _⊆_ {A : Set} (xs : List A) : List A → Set where
- -- empty : (zs : List A) (ys : List A) → [] ⊆ ys
+data _⊆_ {A : Set} : (xs : List A) → (ys : List A) → Set where
+  empty : [] ⊆ []
+  other : (a : A) (xs ys : List A) → (xs ⊆ ys) → (xs ⊆ (a ∷ ys))
+  same : (a : A) (xs ys : List A) → (xs ⊆ ys) → ((a ∷ xs) ⊆ (a ∷ ys))
   --sublist : ? 
 
 -- 6. Докажите, что filter xs ⊆ xs для любого списка xs.
