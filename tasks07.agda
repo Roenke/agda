@@ -47,7 +47,7 @@ data _≤'_ : ℕ → ℕ → Set where
 
 ≤-<= : {n k : ℕ} → n ≤' k → T (n <= k)
 ≤-<= z≤n = tt
-≤-<= (s≤s p) = {!!}
+≤-<= (s≤s p) = ≤-<= p
 
 -- 3. Докажите эквивалентность isSorted и isSorted'.
 
@@ -109,7 +109,7 @@ data div-dom (n k : ℕ) : Set where
   geq : ¬ (n < k) → div-dom (n ∸ k) k → div-dom n k
 
 pos-div-dom : (n k : ℕ) → ¬ (k ≡ 0) → div-dom n k
-pos-div-dom = {!!}
+pos-div-dom n k neg = {!!}
 
 -- 8*. Докажите следующий принцип индукции.
 
@@ -172,12 +172,13 @@ module BinaryTree (A : Set) (_≤_ : A → A → Set) where
     data BinTree : Set where
       empty : BinTree
       inner : (a : A) (left right : BinTree) → leLeft a left → gtRight a right → BinTree
-
+ 
     leLeft : A → BinTree → Set
     leLeft _ empty = ⊤
-    leLeft x (inner a _ _ _ _) = x ≤ a
+    leLeft x (inner a _ empty _ _) = x ≤ a
+    leLeft x (inner a _ r _ _) = leLeft x r
 
     gtRight : A → BinTree → Set
     gtRight _ empty = ⊤
-    gtRight x (inner a _ _ _ _) = x ≤ a
-      
+    gtRight x (inner a empty _ _ _) = x ≤ a
+    gtRight x (inner a l _ _ _) = gtRight x l
