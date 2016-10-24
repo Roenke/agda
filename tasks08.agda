@@ -26,7 +26,7 @@ record Functor (F : Set → Set) : Set₁ where
       fmap (λ x → g (f x)) a ≡ fmap g (fmap f a)
 
 State : Set → Set → Set
-State S A = A → S × A
+State S A = S → S × A
 
 State-Functor : (S : Set) → Functor (State S)
 State-Functor S = {!!}
@@ -86,12 +86,15 @@ T-isProp = {!!}
 ≤-isProp : {n m : ℕ} → isProp (n ≤ m)
 ≤-isProp p q = {!!}
 
--- 7.
+-- 7. Докажите, что <=' не является предикатом.
 
 data _<='_ : ℕ → ℕ → Set where
   z<='n : {n : ℕ} → 0 <=' n
-  foo : {n : ℕ} → n <=' n
+  <='refl : {n : ℕ} → n <=' n
   s<='s : {n m : ℕ} → n <=' m → suc n <=' suc m
+
+<='-refl : ((n m : ℕ) → isProp (n <=' m)) → ⊥
+<='-refl = {!!}
 
 -- 8. Докажите, что если тип A вкладывается в тип B и B является утверждением, то и A является утверждением.
 
@@ -100,26 +103,26 @@ sub-isProp = {!!}
 
 -- 9. Докажите, что рекурсивно определенное равенство списков является предикатом.
 
-record Prop : Set₁ where
+record hProp : Set₁ where
   field
     A : Set
     prop : isProp A
 
-eq : {A : Set} (_==_ : A → A → Prop) → List A → List A → Set
+eq : {A : Set} (_==_ : A → A → hProp) → List A → List A → Set
 eq _ [] [] = ⊤
 eq _ [] (_ ∷ _) = ⊥
 eq _ (_ ∷ _) [] = ⊥
-eq _==_ (x ∷ xs) (y ∷ ys) = Prop.A (x == y) × eq _==_ xs ys
+eq _==_ (x ∷ xs) (y ∷ ys) = hProp.A (x == y) × eq _==_ xs ys
 
-eq-isProp : {A : Set} (_==_ : A → A → Prop) (xs ys : List A) → isProp (eq _==_ xs ys)
+eq-isProp : {A : Set} (_==_ : A → A → hProp) (xs ys : List A) → isProp (eq _==_ xs ys)
 eq-isProp = {!!}
 
-eq-Prop : {A : Set} (_==_ : A → A → Prop) → List A → List A → Prop
+eq-Prop : {A : Set} (_==_ : A → A → hProp) → List A → List A → hProp
 eq-Prop _==_ xs ys = record { A = eq _==_ xs ys ; prop = eq-isProp _==_ xs ys }
 
 -- 10. Докажите, что Σ не является утверждением в общем случае.
 
-∃-isProp : ({A : Set} {B : A → Prop} → isProp (Σ A (λ x → Prop.A (B x)))) → ⊥
+∃-isProp : ({A : Set} {B : A → hProp} → isProp (Σ A (λ x → hProp.A (B x)))) → ⊥
 ∃-isProp = {!!}
 
 -- 11. Докажите, что если для всех x : A верно, что B x является множеством, то (x : A) → B x также является множеством.
@@ -146,9 +149,9 @@ isSet A = (x y : A) → isProp (x ≡ y)
 --     Докажите более общее утверждение, что если равенство элементов типа A разрешимо, то A является множеством.
 --     Для доказательства используйте лемму, приведенную ниже (саму лемму доказывать не нужно).
 
-isSet-lem : {A : Set} (R : A → A → Prop) →
-  ((x y : A) → x ≡ y → Prop.A (R x y)) →
-  ((x y : A) → Prop.A (R x y) → x ≡ y) →
+isSet-lem : {A : Set} (R : A → A → hProp) →
+  ((x y : A) → x ≡ y → hProp.A (R x y)) →
+  ((x y : A) → hProp.A (R x y) → x ≡ y) →
   isSet A
 isSet-lem = {!!}
 
