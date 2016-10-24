@@ -158,14 +158,14 @@ data _<='_ : ℕ → ℕ → Set where
   foo : {n : ℕ} → n <=' n
   s<='s : {n m : ℕ} → n <=' m → suc n <=' suc m
 
-record Prop : Set₁ where
+record hProp : Set₁ where
   constructor prop
   field
     A : Set
     proof : isProp A
 
-∀-isProp : {A : Set} {B : A → Prop} → isProp ((x : A) → Prop.A (B x))
-∀-isProp {A} {B} f g = funExt f g (λ x → Prop.proof (B x) (f x) (g x))
+∀-isProp : {A : Set} {B : A → hProp} → isProp ((x : A) → hProp.A (B x))
+∀-isProp {A} {B} f g = funExt f g (λ x → hProp.proof (B x) (f x) (g x))
 
 ×-isProp : {A B : Set} → isProp A → isProp B → isProp (A × B)
 ×-isProp p q (a , b) (a' , b') = cong₂ _,_ (p a a') (q b b')
@@ -203,9 +203,9 @@ isSet A = (x y : A) → isProp (x ≡ y)
 -- ⊤-isSet x .x refl q = {!!}
 
 -- Пока без доказательства
-isSet-lem : {A : Set} (R : A → A → Prop) →
-  ((x y : A) → x ≡ y → Prop.A (R x y)) →
-  ((x y : A) → Prop.A (R x y) → x ≡ y) →
+isSet-lem : {A : Set} (R : A → A → hProp) →
+  ((x y : A) → x ≡ y → hProp.A (R x y)) →
+  ((x y : A) → hProp.A (R x y) → x ≡ y) →
   isSet A
 isSet-lem R f g = {!!}
 
