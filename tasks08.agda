@@ -29,7 +29,9 @@ State : Set → Set → Set
 State S A = S → S × A
 
 State-Functor : (S : Set) → Functor (State S)
-State-Functor S = {!!}
+State-Functor S = record { fmap = λ fun s x₂ → (proj₁ (s x₂) , fun (proj₂(s x₂))) ;
+                           fmap-id = λ a → refl ;
+                           fmap-comp = λ f g a → refl }
 
 -- 2. Пусть f : A → B и g : B → C ─ некоторые функции.
 --    Докажите, что если f и g инъективны, то g ∘ f также инъективна.
@@ -42,10 +44,10 @@ _∘_ : {A B C : Set} → (B → C) → (A → B) → A → C
 g ∘ f = λ x → g (f x)
 
 ∘-inj : {A B C : Set} (f : A → B) (g : B → C) → isInj f → isInj g → isInj (g ∘ f)
-∘-inj = {!!}
+∘-inj f g fi gi = λ x x' z → fi x x' (gi (f x) (f x') z)
 
 ∘-inj' : {A B C : Set} (f : A → B) (g : B → C) → isInj (g ∘ f) → isInj f
-∘-inj' = {!!}
+∘-inj' f g compInj = λ x x' proof → compInj x x' (cong g proof)
 
 -- 3. Определите предикат "делится на 3 или на 5" так, чтобы он возвращал утверждения.
 --    Докажите, что MultipleOf3Or5 вкладывается в ℕ.
@@ -54,15 +56,57 @@ isProp : Set → Set
 isProp A = (x y : A) → x ≡ y
 
 isMultipleOf3Or5 : ℕ → Set
-isMultipleOf3Or5 = {!!}
+isMultipleOf3Or5 0 = ⊤
+isMultipleOf3Or5 1 = ⊥
+isMultipleOf3Or5 2 = ⊥
+isMultipleOf3Or5 3 = ⊤
+isMultipleOf3Or5 4 = ⊥
+isMultipleOf3Or5 5 = ⊤
+isMultipleOf3Or5 6 = ⊤
+isMultipleOf3Or5 7 = ⊥
+isMultipleOf3Or5 8 = ⊥
+isMultipleOf3Or5 9 = ⊤
+isMultipleOf3Or5 10 = ⊤
+isMultipleOf3Or5 11 = ⊥
+isMultipleOf3Or5 12 = ⊤
+isMultipleOf3Or5 13 = ⊥
+isMultipleOf3Or5 14 = ⊥
+isMultipleOf3Or5 (suc (suc (suc (suc (suc (suc (suc (suc (suc (suc (suc (suc (suc (suc (suc x))))))))))))))) = isMultipleOf3Or5 x
 
 record MultipleOf3Or5 : Set where
+  constructor mul53
   field
     number : ℕ
     proof : isMultipleOf3Or5 number
 
+-- ⊤
+⊤-isProp : isProp ⊤
+⊤-isProp = λ x y → refl
+
+-- ⊥
+⊥-isProp : isProp ⊥
+⊥-isProp = λ x ()
+
+mul-is-Prop : (n : ℕ) → isProp (isMultipleOf3Or5 n)
+mul-is-Prop 0 = ⊤-isProp
+mul-is-Prop 1 = ⊥-isProp
+mul-is-Prop 2 = ⊥-isProp
+mul-is-Prop 3 = ⊤-isProp
+mul-is-Prop 4 = ⊥-isProp
+mul-is-Prop 5 = ⊤-isProp
+mul-is-Prop 6 = ⊤-isProp
+mul-is-Prop 7 = ⊥-isProp
+mul-is-Prop 8 = ⊥-isProp
+mul-is-Prop 9 = ⊤-isProp
+mul-is-Prop 10 = ⊤-isProp
+mul-is-Prop 11 = ⊥-isProp
+mul-is-Prop 12 = ⊤-isProp
+mul-is-Prop 13 = ⊥-isProp
+mul-is-Prop 14 = ⊥-isProp
+mul-is-Prop (suc (suc (suc (suc (suc (suc (suc (suc (suc (suc (suc (suc (suc (suc (suc x))))))))))))))) = mul-is-Prop x
+
 MultipleOf3Or5-inj : isInj MultipleOf3Or5.number
-MultipleOf3Or5-inj = {!!}
+MultipleOf3Or5-inj (mul53 number proof) (mul53 .number proof₁) refl = cong (mul53 number) (mul-is-Prop number proof proof₁)
 
 -- 4. Мы будем говорить, что тип A тривиален, если существует элемент в A, такой что любой другой элемент в A равен ему.
 --    Докажите, что тип A тривиален тогда и только тогда, когда A является утверждением и A населен.
@@ -74,7 +118,7 @@ _↔_ : Set → Set → Set
 P ↔ Q = (P → Q) × (Q → P)
 
 isTriv-lem : (A : Set) → isTriv A ↔ (isProp A × A)
-isTriv-lem A = {!!}
+isTriv-lem A = (λ x → {!!}) , {!!}
 
 -- 5. Докажите, что T является утверждением.
 
