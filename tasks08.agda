@@ -128,8 +128,10 @@ T-isProp true = λ x y → refl
 -- 6. Докажите, что ≤ является предикатом.
 
 ≤-isProp : {n m : ℕ} → isProp (n ≤ m)
-≤-isProp p q = {!!}
-
+≤-isProp {zero} {zero} = λ x y → {!!}
+≤-isProp {zero} {suc m} = λ x y → {!!}
+≤-isProp {suc n} {zero} = λ x ()
+≤-isProp {suc n} {suc m} = {!!}
 -- 7. Докажите, что <=' не является предикатом.
 
 data _<='_ : ℕ → ℕ → Set where
@@ -138,12 +140,12 @@ data _<='_ : ℕ → ℕ → Set where
   s<='s : {n m : ℕ} → n <=' m → suc n <=' suc m
 
 <='-refl : ((n m : ℕ) → isProp (n <=' m)) → ⊥
-<='-refl = {!!}
+<='-refl proof = {!!} 
 
 -- 8. Докажите, что если тип A вкладывается в тип B и B является утверждением, то и A является утверждением.
 
 sub-isProp : {A B : Set} (f : A → B) → isInj f → isProp B → isProp A
-sub-isProp = {!!}
+sub-isProp f inj bproof = λ x y → inj x y (bproof (f x) (f y))
 
 -- 9. Докажите, что рекурсивно определенное равенство списков является предикатом.
 
