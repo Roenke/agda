@@ -168,7 +168,10 @@ eq _ (_ ∷ _) [] = ⊥
 eq _==_ (x ∷ xs) (y ∷ ys) = hProp.A (x == y) × eq _==_ xs ys
 
 eq-isProp : {A : Set} (_==_ : A → A → hProp) (xs ys : List A) → isProp (eq _==_ xs ys)
-eq-isProp = {!!}
+eq-isProp _==_ [] [] = ⊤-isProp
+eq-isProp _==_ [] (y ∷ ys) = ⊥-isProp
+eq-isProp _==_ (x ∷ xs) [] = ⊥-isProp 
+eq-isProp _==_ (x ∷ xs) (y ∷ ys) = λ x₁ y₁ → {!!}
 
 eq-Prop : {A : Set} (_==_ : A → A → hProp) → List A → List A → hProp
 eq-Prop _==_ xs ys = record { A = eq _==_ xs ys ; prop = eq-isProp _==_ xs ys }
@@ -176,7 +179,7 @@ eq-Prop _==_ xs ys = record { A = eq _==_ xs ys ; prop = eq-isProp _==_ xs ys }
 -- 10. Докажите, что Σ не является утверждением в общем случае.
 
 ∃-isProp : ({A : Set} {B : A → hProp} → isProp (Σ A (λ x → hProp.A (B x)))) → ⊥
-∃-isProp = {!!}
+∃-isProp proof = {!!}
 
 -- 11. Докажите, что если для всех x : A верно, что B x является множеством, то (x : A) → B x также является множеством.
 
