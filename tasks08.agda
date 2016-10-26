@@ -140,7 +140,10 @@ data _<='_ : ℕ → ℕ → Set where
   s<='s : {n m : ℕ} → n <=' m → suc n <=' suc m
 
 <='-refl : ((n m : ℕ) → isProp (n <=' m)) → ⊥
-<='-refl proof = {!!} 
+<='-refl proof = lem (proof zero zero z<='n <='refl)
+  where
+    lem : z<='n ≡ <='refl → ⊥
+    lem ()
 
 -- 8. Докажите, что если тип A вкладывается в тип B и B является утверждением, то и A является утверждением.
 
