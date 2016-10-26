@@ -118,13 +118,13 @@ _↔_ : Set → Set → Set
 P ↔ Q = (P → Q) × (Q → P)
 
 isTriv-lem : (A : Set) → isTriv A ↔ (isProp A × A)
-isTriv-lem A = (λ x → {!!}) , {!!}
+isTriv-lem A = (λ x → (λ x₁ y → {!!}) , {!!}) , {!!}
 
 -- 5. Докажите, что T является утверждением.
 
 T-isProp : (x : Bool) → isProp (T x)
-T-isProp = {!!}
-
+T-isProp false = λ y ()
+T-isProp true = λ x y → refl
 -- 6. Докажите, что ≤ является предикатом.
 
 ≤-isProp : {n m : ℕ} → isProp (n ≤ m)
