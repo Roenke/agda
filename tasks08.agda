@@ -118,7 +118,7 @@ _↔_ : Set → Set → Set
 P ↔ Q = (P → Q) × (Q → P)
 
 isTriv-lem : (A : Set) → isTriv A ↔ (isProp A × A)
-isTriv-lem A = (λ x → (λ x₁ y → {!!}) , {!!}) , {!!}
+isTriv-lem A = {!!} , {!!}
 
 -- 5. Докажите, что T является утверждением.
 
@@ -128,10 +128,8 @@ T-isProp true = λ x y → refl
 -- 6. Докажите, что ≤ является предикатом.
 
 ≤-isProp : {n m : ℕ} → isProp (n ≤ m)
-≤-isProp {zero} {zero} = λ x y → {!!}
-≤-isProp {zero} {suc m} = λ x y → {!!}
-≤-isProp {suc n} {zero} = λ x ()
-≤-isProp {suc n} {suc m} = {!!}
+≤-isProp z≤n z≤n = refl
+≤-isProp (s≤s n) (s≤s m) = cong s≤s (≤-isProp n m)
 -- 7. Докажите, что <=' не является предикатом.
 
 data _<='_ : ℕ → ℕ → Set where
