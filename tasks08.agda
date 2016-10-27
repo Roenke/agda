@@ -171,7 +171,8 @@ eq-isProp : {A : Set} (_==_ : A → A → hProp) (xs ys : List A) → isProp (eq
 eq-isProp _==_ [] [] = ⊤-isProp
 eq-isProp _==_ [] (y ∷ ys) = ⊥-isProp
 eq-isProp _==_ (x ∷ xs) [] = ⊥-isProp 
-eq-isProp _==_ (x ∷ xs) (y ∷ ys) = λ x₁ y₁ → {!!}
+eq-isProp _==_ (x ∷ xs) (y ∷ ys) x1 y1 with x == y
+eq-isProp _==_ (x ∷ xs) (y ∷ ys) (x1 , x2) (y1 , y2) | cmp = cong₂ _,_ (hProp.prop cmp x1 y1) (eq-isProp _==_ xs ys x2 y2)
 
 eq-Prop : {A : Set} (_==_ : A → A → hProp) → List A → List A → hProp
 eq-Prop _==_ xs ys = record { A = eq _==_ xs ys ; prop = eq-isProp _==_ xs ys }
