@@ -191,8 +191,7 @@ isSet : Set → Set
 isSet A = (x y : A) → isProp (x ≡ y)
 
 Π-isSet : {A : Set} {B : A → Set} → ((x : A) → isSet (B x)) → isSet ((x : A) → (B x))
-Π-isSet = {!!}
-
+Π-isSet pX x y = λ x₁ y₁ → {!!}
 -- 12. Докажите, что Σ сохраняет множества.
 
 Σ-isSet : {A : Set} {B : A → Set} → isSet A → ((x : A) → isSet (B x)) → isSet (Σ A B)
@@ -204,6 +203,11 @@ isSet A = (x y : A) → isProp (x ≡ y)
 ⊎-isSet = {!!}
 
 -- 14. Определите по аналогии с Prop тип типов, являющихся множествами.
+
+record hSet : Set₁ where
+  field
+    A : Set
+    set : isSet A
 
 -- 15. Закончите доказательство того, что ℕ является множеством.
 --     Докажите более общее утверждение, что если равенство элементов типа A разрешимо, то A является множеством.
@@ -233,8 +237,14 @@ suc n == suc m = n == m
 ≡-== (suc n) zero ()
 ≡-== (suc n) (suc m) p = ≡-== n m (cong pred p)
 
+ℕ-isProp : (n m : ℕ) → isProp (T (n == m))
+ℕ-isProp zero zero = λ x y → refl
+ℕ-isProp (suc n) zero = λ x ()
+ℕ-isProp zero (suc m) = λ x ()
+ℕ-isProp (suc n) (suc m) = λ x y → ℕ-isProp n m x y
+
 ℕ-isSet : isSet ℕ
-ℕ-isSet = isSet-lem (λ x y → record { A = T (x == y) ; prop = {!!} }) ≡-== ==-≡
+ℕ-isSet = isSet-lem (λ x y → record { A = T (x == y) ; prop = ℕ-isProp x y }) ≡-== ==-≡
 
 Hedberg : {A : Set} → ((x y : A) → Dec (x ≡ y)) → isSet A
-Hedberg = {!!}
+Hedberg f = isSet-lem (λ x y → {!!}) (λ x y x₁ → {!!}) (λ x y x₁ → {!!}) 
