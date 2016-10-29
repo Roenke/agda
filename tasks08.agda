@@ -180,7 +180,10 @@ eq-Prop _==_ xs ys = record { A = eq _==_ xs ys ; prop = eq-isProp _==_ xs ys }
 -- 10. Докажите, что Σ не является утверждением в общем случае.
 
 ∃-isProp : ({A : Set} {B : A → hProp} → isProp (Σ A (λ x → hProp.A (B x)))) → ⊥
-∃-isProp proof = {!!}
+∃-isProp proof = notProp (proof {Bool} {λ x → record { A = ⊤ ; prop = ⊤-isProp } } (false , tt) (true , tt))
+  where
+    notProp : (false , tt) ≡ (true , tt) → ⊥
+    notProp ()
 
 -- 11. Докажите, что если для всех x : A верно, что B x является множеством, то (x : A) → B x также является множеством.
 
