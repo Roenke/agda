@@ -15,10 +15,10 @@ open import Trunc
 ∃ A B = ∥ Σ A B ∥
 
 ∃-intro : {A : Set} {B : A → Set} → (a : A) → B a → ∃[ x ∶ A ] (B x)
-∃-intro = {!!}
+∃-intro a b = ∣ a , b ∣
 
 ∃-elim : {A : Set} {B : A → Set} {C : Set} → isProp C → ((a : A) → B a → C) → ∃ A B → C
-∃-elim = {!!}
+∃-elim propC toC ex = Trunc-rec propC (λ{ (a , b) → toC a b})  ex
 
 syntax ∃ A (λ x → B) = ∃[ x ∶ A ] B
 
@@ -34,15 +34,15 @@ record hProp : Set₁ where
     proof : isProp A
 
 natural-numbers-exist : hProp
-natural-numbers-exist = {!!}
+natural-numbers-exist = prop ℕ (λ x y → {!!})
 
 -- 3. Докажите, что функция pred сюръективна.
 
 isSur : {A B : Set} → (A → B) → Set
 isSur {A} {B} f = (y : B) → ∃[ x ∶ A ] (f x ≡ y)
 
-pred-is-not-sur : isSur pred
-pred-is-not-sur = {!!}
+pred-is-sur : isSur pred
+pred-is-sur = {!!}
 
 -- 4. Докажите, что функция suc не сюръективна.
 
