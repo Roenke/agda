@@ -106,7 +106,15 @@ sigmaExt : {A : Set} {B : A → Set} {a a' : A} {b : B a} {b' : B a'} (p : a ≡
 sigmaExt refl q = cong (_,_ _) q
 
 isInj-isSur-isBij : {A B : Set} → isSet B → (f : A → B) → isInj f → isSur f → isBij f
-isInj-isSur-isBij = {!!}
+isInj-isSur-isBij Bs f fi fs =
+  (λ b → proj₁ (isInj-isSur-isBij' Bs f fi fs b)) ,
+  {!!} ,
+  (λ b → proj₂ (isInj-isSur-isBij' Bs f fi fs b))
+  where
+    isInj-isSur-isBij' : {A B : Set} → isSet B → (f : A → B) → isInj f → isSur f →
+      (y : B) → Σ[ x ∶ A ] (f x ≡ y)
+    isInj-isSur-isBij' Bs f fi fs b = {!!}
+
 
 -- 7. Докажите, что isBij является утверждением.
 
