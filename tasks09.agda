@@ -64,8 +64,19 @@ suc-is-not-sur proof = lem (proof zero)
 _∘_ : {A B C : Set} → (B → C) → (A → B) → A → C
 g ∘ f = λ x → g (f x)
 
-∘-trans : {A B C : Set} → (f : A → B) → (g : B → C) → (a : A) → (b : B) → (c : C) → (f a ≡ b) → (g b ≡ c) → ((g ∘ f) a ≡ c)
-∘-trans f g a b c p1 p2 = {!!}
+open ≡-Reasoning
+
+∘-trans : {a b c : Set} → (f : a → b) → (g : b → c) → (a : a) → (b : b) → (c : c) → (f a ≡ b) → (g b ≡ c) → ((g ∘ f) a ≡ c)
+∘-trans f g a b c p1 p2  =
+  begin
+    (g ∘ f) a
+  ≡⟨ refl ⟩
+    g (f a)
+  ≡⟨ cong (λ x → g x) p1 ⟩
+    g b
+  ≡⟨ p2 ⟩
+    c
+  ∎
 
 ∘-sur : {A B C : Set} (f : A → B) (g : B → C) → isSur f → isSur g → isSur (g ∘ f)
 ∘-sur f g fSur gSur = λ y → ∃-elim trunc (λ a x → ∃-elim trunc (λ a₁ x₁ → ∃-intro a₁ (∘-trans f g a₁ a y x₁ x)) (fSur a)) (gSur y)
