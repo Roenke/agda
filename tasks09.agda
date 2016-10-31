@@ -34,7 +34,7 @@ record hProp : Set₁ where
     proof : isProp A
 
 natural-numbers-exist : hProp
-natural-numbers-exist = prop ℕ (λ x y → {!!})
+natural-numbers-exist = prop (∥ ℕ ∥) trunc 
 
 -- 3. Докажите, что функция pred сюръективна.
 
@@ -42,13 +42,21 @@ isSur : {A B : Set} → (A → B) → Set
 isSur {A} {B} f = (y : B) → ∃[ x ∶ A ] (f x ≡ y)
 
 pred-is-sur : isSur pred
-pred-is-sur = {!!}
+pred-is-sur n = ∃-intro (suc n) refl
 
 -- 4. Докажите, что функция suc не сюръективна.
 
-suc-is-not-sur : isSur suc → ⊥
-suc-is-not-sur = {!!}
+⊥-isProp : isProp ⊥
+⊥-isProp = λ x ()
 
+suc-is-not-sur : isSur suc → ⊥
+suc-is-not-sur proof = lem (proof zero)
+  where
+    lem' : (x : ℕ) → (suc x ≡ zero) → ⊥
+    lem' _ ()
+    lem : ∃[ x ∶ ℕ ] (suc x ≡ zero) → ⊥
+    lem p = ∃-elim (λ x → λ ())  (λ a x → lem' a x) p
+    
 -- 5. Пусть f : A → B и g : B → C ─ некоторые функции.
 --    Докажите, что если f и g сюръективны, то g ∘ f также сюръективна.
 --    Докажите, что если g ∘ f сюръективна, то g также сюръективна.
@@ -57,10 +65,10 @@ _∘_ : {A B C : Set} → (B → C) → (A → B) → A → C
 g ∘ f = λ x → g (f x)
 
 ∘-sur : {A B C : Set} (f : A → B) (g : B → C) → isSur f → isSur g → isSur (g ∘ f)
-∘-sur = {!!}
+∘-sur f g fSur gSur = {!!}
 
 ∘-sur' : {A B C : Set} (f : A → B) (g : B → C) → isSur (g ∘ f) → isSur g
-∘-sur' = {!!}
+∘-sur' f g compSur = {!!}
 
 -- 6. Докажите, что функция является биекцией тогда и только тогда, когда она является инъекцией и сюръекцией.
 
