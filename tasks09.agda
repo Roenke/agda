@@ -55,7 +55,7 @@ suc-is-not-sur proof = lem (proof zero)
     lem' : (x : ℕ) → (suc x ≡ zero) → ⊥
     lem' _ ()
     lem : ∃[ x ∶ ℕ ] (suc x ≡ zero) → ⊥
-    lem p = ∃-elim (λ x → λ ())  (λ a x → lem' a x) p
+    lem p = ∃-elim ⊥-isProp  (λ a x → lem' a x) p
     
 -- 5. Пусть f : A → B и g : B → C ─ некоторые функции.
 --    Докажите, что если f и g сюръективны, то g ∘ f также сюръективна.
@@ -64,11 +64,14 @@ suc-is-not-sur proof = lem (proof zero)
 _∘_ : {A B C : Set} → (B → C) → (A → B) → A → C
 g ∘ f = λ x → g (f x)
 
+∘-trans : {A B C : Set} → (f : A → B) → (g : B → C) → (a : A) → (b : B) → (c : C) → (f a ≡ b) → (g b ≡ c) → ((g ∘ f) a ≡ c)
+∘-trans f g a b c p1 p2 = {!!}
+
 ∘-sur : {A B C : Set} (f : A → B) (g : B → C) → isSur f → isSur g → isSur (g ∘ f)
-∘-sur f g fSur gSur = {!!}
+∘-sur f g fSur gSur = λ y → ∃-elim trunc (λ a x → ∃-elim trunc (λ a₁ x₁ → ∃-intro a₁ (∘-trans f g a₁ a y x₁ x)) (fSur a)) (gSur y)
 
 ∘-sur' : {A B C : Set} (f : A → B) (g : B → C) → isSur (g ∘ f) → isSur g
-∘-sur' f g compSur = {!!}
+∘-sur' f g compSur = λ y → ∃-elim trunc (λ a x → ∃-intro (f a) x) (compSur y)
 
 -- 6. Докажите, что функция является биекцией тогда и только тогда, когда она является инъекцией и сюръекцией.
 
