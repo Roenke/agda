@@ -93,10 +93,19 @@ isBij : {A B : Set} → (A → B) → Set
 isBij {A} {B} f = Σ[ g ∶ (B → A) ] (((x : A) → g (f x) ≡ x) × ((y : B) → f (g y) ≡ y))
 
 isBij-isInj : {A B : Set} (f : A → B) → isBij f → isInj f
-isBij-isInj = {!!}
+isBij-isInj f (g , (inj , sur)) x y p =
+  begin
+    x
+  ≡⟨ sym (inj x) ⟩
+    g (f x)
+  ≡⟨ cong (λ x → g x) p ⟩
+    g (f y)
+  ≡⟨ inj y ⟩
+    y
+  ∎
 
 isBij-isSur : {A B : Set} (f : A → B) → isBij f → isSur f
-isBij-isSur = {!!}
+isBij-isSur f (g , (inj , sur)) y = ∃-intro (g y) (sur y)
 
 isSet : Set → Set
 isSet A = (x y : A) → isProp (x ≡ y)
