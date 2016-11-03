@@ -139,7 +139,31 @@ isInj-isSur-isBij {A} Bs f fi fs =
 
 -- 7. Докажите, что isBij является утверждением.
 
-isBij-isProp : {A B : Set} → isSet A → isSet B → (f : A → B) → isProp (isBij f)
-isBij-isProp sa sb f x y = {!!}
+{-
+isBij : {A B : Set} → (A → B) → Set
+isBij {A} {B} f = Σ[ g ∶ (B → A) ] (((x : A) → g (f x) ≡ x) × ((y : B) → f (g y) ≡ y))
 
+isSet : Set → Set
+isSet A = (x y : A) → isProp (x ≡ y)
+-}
+
+postulate
+  funExt : {A : Set} {B : A → Set} (f g : (x : A) → B x) → ((x : A) → f x ≡ g x) → f ≡ g
+
+isBij-isProp : {A B : Set} → isSet A → isSet B → (f : A → B) → isProp (isBij f)
+isBij-isProp {A} {B} sa sb f (g , (p1 , p2)) (h , (t1 , t2)) = sigmaExt (funExt g h proof) proof'
+  where
+    proof : (x : B) → g x ≡ h x
+    proof x = begin
+        g x
+      ≡⟨ sym (t1 (g x)) ⟩
+        h (f (g x))
+      ≡⟨ cong (λ y → h y) (p2 x) ⟩
+        h x
+      ∎
+    proof' : subst
+      (λ g₁ → ((x : A) → g₁ (f x) ≡ x) × ((y : B) → f (g₁ y) ≡ y))
+      (funExt g h proof) (p1 , p2)
+      ≡ (t1 , t2)
+    proof' = {!!}
 -- 8. См. Cantor.agda.
