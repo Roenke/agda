@@ -114,20 +114,32 @@ isSet A = (x y : A) → isProp (x ≡ y)
 sigmaExt : {A : Set} {B : A → Set} {a a' : A} {b : B a} {b' : B a'} (p : a ≡ a') → subst B p b ≡ b' → _≡_ {A = Σ A B} (a , b) (a' , b')
 sigmaExt refl q = cong (_,_ _) q
 
+-- isSur {A} {B} f = (y : B) → ∃[ x ∶ A ] (f x ≡ y)
+
 isInj-isSur-isBij : {A B : Set} → isSet B → (f : A → B) → isInj f → isSur f → isBij f
-isInj-isSur-isBij Bs f fi fs =
+isInj-isSur-isBij {A} Bs f fi fs =
   (λ b → proj₁ (isInj-isSur-isBij' Bs f fi fs b)) ,
-  {!!} ,
+  proof' ,
   (λ b → proj₂ (isInj-isSur-isBij' Bs f fi fs b))
   where
     isInj-isSur-isBij' : {A B : Set} → isSet B → (f : A → B) → isInj f → isSur f →
       (y : B) → Σ[ x ∶ A ] (f x ≡ y)
-    isInj-isSur-isBij' Bs f fi fs b = {!!}
-
+    isInj-isSur-isBij' Bs f fi fs b with (fs b)
+    isInj-isSur-isBij' {A} {B} Bs f fi fs b | v = ∃-elim Σ-isProp (λ x y → (x , y)) v
+      where
+        Σ-isProp : isProp (Σ[ x ∶ A ] (f x ≡ b))
+        Σ-isProp (x1 , x2) (y1 , y2) = sigmaExt lem (Bs (f y1) b (subst (λ z → f z ≡ b) (fi x1 y1 (trans x2 (sym y2))) x2) y2)
+          where
+            lem : x1 ≡ y1
+            lem = fi x1 y1 (trans x2 (sym y2))
+            
+    proof' : (x : A) → proj₁ (isInj-isSur-isBij' Bs f fi fs (f x)) ≡ x
+    proof' x with (isInj-isSur-isBij' Bs f fi fs (f x))
+    proof' x | (p1 , p2) = fi p1 x p2
 
 -- 7. Докажите, что isBij является утверждением.
 
 isBij-isProp : {A B : Set} → isSet A → isSet B → (f : A → B) → isProp (isBij f)
-isBij-isProp = {!!}
+isBij-isProp sa sb f x y = {!!}
 
 -- 8. См. Cantor.agda.
