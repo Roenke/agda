@@ -33,7 +33,7 @@ K A = (a : A) (p : a ≡ a) → p ≡ refl
 K-is-false : K Set → ⊥
 K-is-false k =
   let t = k Bool (SetExt (not , (not , not-not , not-not)))
-  in ? -- subst {!!} {!!} {!!}
+  in {!!}
 -- 4. Докажите, что inv является обратным к **.
 
 inv-left : {A : Set} {x y : A} (p : x ≡ y) → inv p ** p ≡ idp
@@ -57,7 +57,17 @@ record Group (A : Set) : Set where
     ginv-right : {x : A} → x & ginv x ≡ id
 
 aut : {A : Set} → isGpd A → (a : A) → Group (a ≡ a)
-aut = {!!}
+aut = λ g a → record
+                { set = g a a
+                ; id = idp
+                ; _&_ = _**_
+                ; ginv = inv
+                ; assoc = λ {x} {y} {z} → **-assoc x y z
+                ; id-left = λ {x} → idp-left x 
+                ; id-right = λ {x} → idp-right x
+                ; ginv-left = λ {x} → inv-left x
+                ; ginv-right = λ {x} → inv-right x
+                }
 
 -- 6. Докажите, что множество автоморфизмов 2-х элементного множества состоит из двух элементов.
 
